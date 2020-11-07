@@ -1,21 +1,18 @@
-import 'package:flutter/material.dart' show TimeOfDay, DayPeriod;
-import 'package:haweyati_client_data_models/common/serializable.dart';
+import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
-enum ServiceType {
-  dumpsters,
-  scaffoldings,
-  delivery_vehicles,
-  buildingMaterials,
-  finishing_materials,
-}
+part 'time-slot_model.g.dart';
 
-class TimeSlot implements Serializable<String> {
+@HiveType(typeId: 155)
+class TimeSlot {
+  @HiveField(0)
   final TimeOfDay to;
+  @HiveField(1)
   final TimeOfDay from;
 
   TimeSlot({this.to, this.from});
 
-  factory TimeSlot.fromJson(dynamic json) {
+  static TimeSlot fromJson(dynamic json) {
     if (json == null) return null;
 
     if (json is String) {
@@ -23,18 +20,23 @@ class TimeSlot implements Serializable<String> {
 
       json = {
         'from': arr[0].toString().trim(),
-        'to': arr[1].toString().trim()
+        'to': arr[1].toString().trim(),
       };
     }
-
 
     final _to = json['to'].toString().split(':');
     final _from = json['from'].toString().split(':');
     print('$_to - $_from');
 
     return TimeSlot(
-        to: TimeOfDay(hour: int.parse(_to[0]), minute: int.parse(_to[1])),
-        from: TimeOfDay(hour: int.parse(_from[0]), minute: int.parse(_from[1]))
+      to: TimeOfDay(
+        hour: int.parse(_to[0]),
+        minute: int.parse(_to[1]),
+      ),
+      from: TimeOfDay(
+        hour: int.parse(_from[0]),
+        minute: int.parse(_from[1]),
+      ),
     );
   }
 
@@ -52,23 +54,20 @@ class TimeSlot implements Serializable<String> {
       var next = i.increment(3);
 
       if (next > to) next = to;
-      if (_current < next) {
-        _intervals.add(TimeSlot(
-          from: i, to: next
-        ));
-      }
+      if (_current < next) _intervals.add(TimeSlot(from: i, to: next));
     }
 
     print(_intervals);
     return _intervals;
   }
 
-  @override String toString() {
+  @override
+  String toString() {
     return '${from.__toString()} - ${to.__toString()}';
   }
 
-  @override String serialize() =>
-      '${from.hour}:${from.minute} - ${to.hour}:${to.minute}';
+  static String toJson(TimeSlot slot) => '${slot.from.hour}:${slot.from.minute}'
+      ' - ${slot.to.hour}:${slot.to.minute}';
 
   @override
   bool operator ==(Object other) {
@@ -77,6 +76,9 @@ class TimeSlot implements Serializable<String> {
     }
     return false;
   }
+
+  @override
+  int get hashCode => super.hashCode;
 }
 
 extension Comparison on TimeOfDay {

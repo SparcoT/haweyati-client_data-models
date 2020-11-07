@@ -1,269 +1,273 @@
-import 'package:haweyati_client_data_models/common/json_serializable.dart';
-import 'package:haweyati_client_data_models/models/order/scaffoldings/order-item_model.dart';
+import 'dart:io';
+
 import 'package:hive/hive.dart';
-import 'package:meta/meta.dart';
-import '../payment_model.dart';
-import '../user_model.dart';
-import 'building-material/order-item_model.dart';
-import 'dumpster/order-item_model.dart';
-import 'finishing-material/order-item_model.dart';
-import 'order-item_model.dart';
-import 'order-location_model.dart';
+import 'products/dumpster_orderable.dart';
+import 'products/building-material_orderable.dart';
+import 'products/finishing-material_orderable.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:haweyati_client_data_models/data.dart';
+import 'package:haweyati_client_data_models/model.dart';
+import 'package:haweyati_client_data_models/models/time-slot_model.dart';
+import 'package:haweyati_client_data_models/models/user/customer_model.dart';
+import 'package:haweyati_client_data_models/models/others/location_model.dart';
 
-class OrderImage implements JsonSerializable {
-  String sort;
-  String name;
+part 'order_model.g.dart';
 
-  OrderImage({
-    this.sort,
-    this.name
-  });
-
-  @override
-  Map<String, dynamic> serialize() => {
-    'sort': sort, 'name': name
-  };
+@HiveType(typeId: 190)
+enum OrderType {
+  @HiveField(0)
+  @JsonValue('Building Material')
+  buildingMaterial,
+  @HiveField(1)
+  @JsonValue('Construction Dumpster')
+  dumpster,
+  @HiveField(2)
+  @JsonValue('Finishing Material')
+  finishingMaterial,
+  @HiveField(3)
+  @JsonValue('Scaffolding')
+  scaffolding,
 }
 
-@HiveType(typeId: 0)
-class Order extends HiveObject implements JsonSerializable {
-  String id;
+@HiveType(typeId: 191)
+enum OrderStatus {
+  @HiveField(0)
+  @JsonValue(0)
+  pending,
+  @HiveField(1)
+  @JsonValue(1)
+  approved,
+  @HiveField(2)
+  @JsonValue(2)
+  accepted,
+  @HiveField(3)
+  @JsonValue(3)
+  preparing,
+  @HiveField(4)
+  @JsonValue(4)
+  dispatched,
+  @HiveField(5)
+  @JsonValue(5)
+  delivered,
+  @HiveField(6)
+  @JsonValue(6)
+  rejected,
+  @HiveField(7)
+  @JsonValue(7)
+  canceled
+}
 
+// TODO: Use this.
+// @HiveType(typeId: 192)
+// enum PaymentType {
+//   @HiveField(0)
+//   applePay,
+//   @HiveField(1)
+//   cashOnDelivery,
+//   @HiveField(2)
+//   creditCard,
+//   @HiveField(3)
+//   mada
+// }
+
+@HiveType(typeId: 193)
+@JsonSerializable(includeIfNull: false)
+class OrderImage {
+  @HiveField(0)
+  String sort;
+  @HiveField(1)
+  String name;
+
+  OrderImage({this.sort, this.name});
+  Map<String, dynamic> toJson() => _$OrderImageToJson(this);
+  factory OrderImage.fromJson(json) => _$OrderImageFromJson(json);
+}
+
+@HiveType(typeId: 194)
+@JsonSerializable(includeIfNull: false)
+class OrderLocation extends Location {
+  @HiveField(4)
+  @JsonKey(fromJson: TimeSlot.fromJson, toJson: TimeSlot.toJson)
+  TimeSlot dropOffTime;
+  @HiveField(5)
+  DateTime dropOffDate;
+
+  OrderLocation({
+    double latitude,
+    double longitude,
+    this.dropOffTime,
+    this.dropOffDate,
+  }) : super(
+          latitude: 2,
+          longitude: 1,
+        );
+
+  void update(Location location) {
+    city = location?.city;
+    address = location?.address;
+    latitude = location?.latitude;
+    longitude = location?.longitude;
+  }
+
+  factory OrderLocation.fromAppData() {
+    return OrderLocation()..update(AppData().location);
+  }
+
+  @override
+  Map<String, dynamic> toJson() => _$OrderLocationToJson(this);
+  factory OrderLocation.fromJson(json) => _$OrderLocationFromJson(json);
+}
+
+@HiveType(typeId: 180)
+@JsonSerializable(includeIfNull: false)
+class OrderPayment {
+  @HiveField(0)
+  String type;
+  @HiveField(1)
+  String intentId;
+
+  OrderPayment({this.type, this.intentId});
+
+  Map<String, dynamic> toJson() => _$OrderPaymentToJson(this);
+  factory OrderPayment.fromJson(json) => _$OrderPaymentFromJson(json);
+}
+
+class OrderProductHolder<T extends OrderableProduct> {
+  T item;
+  double subtotal;
+  String supplier;
+
+  OrderProductHolder({this.item, this.supplier, this.subtotal});
+
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'item': (item as dynamic).toJson(),
+        'subtotal': subtotal,
+        'supplier': supplier
+      };
+}
+
+abstract class Purchasable extends BaseModelHive {}
+
+abstract class OrderableProduct<T extends Purchasable> extends HiveObject {
+  @HiveField(0)
+  Purchasable _product;
+  OrderableProduct(this._product);
+
+  T get product => _product;
+  set product(T t) => _product = t;
+}
+
+@HiveType(typeId: 179)
+@JsonSerializable(includeIfNull: false)
+class Order<T extends OrderableProduct> extends BaseModelHive {
   String city;
   String note;
-  double total;
   String number;
-  OrderType type;
   double deliveryFee;
+
+  double _subtotal = 0.0;
+
+  OrderType type;
   OrderStatus status;
 
-  User customer;
+  Customer customer;
 
-  Payment payment;
-  OrderLocation location;
+  OrderPayment payment;
+  OrderLocation _location;
+
   List<OrderImage> images;
-  List<OrderItemHolder> items;
+
+  @JsonKey(ignore: true)
+  List<OrderProductHolder> products;
 
   DateTime createdAt;
   DateTime updatedAt;
 
-  void addItem({OrderItem item, double price}) {
-    items.add(OrderItemHolder(
-      item: item, subtotal: price
-    ));
-
-    total += price;
+  Order({
+    this.note,
+    this.number,
+  }) {
+    images ??= [];
+    products ??= [];
+    _location ??= OrderLocation.fromAppData();
   }
 
-  Order(this.type, {
-    this.id,
-    this.city,
-    this.note,
-    this.total = 0.0,
-    this.items,
-    this.number,
-    this.images = const [],
-    this.status,
-    this.payment,
-    this.location,
-    this.customer,
-    this.createdAt,
-    this.updatedAt,
-    this.deliveryFee = 50
-  });
+  Map<String, dynamic> toJson() => _$OrderToJson(this)
+    ..addAll({'items': products.map((e) => e.toJson()).toList()});
+  factory Order.fromJson(json) {
+    final order = _$OrderFromJson(json);
 
-  factory Order.fromJson(Map<String, dynamic> json) {
-    OrderItem Function(Map<String, dynamic>) _parser;
-    final type = _typeFromString(json['service']);
-
-    switch (type) {
-      case OrderType.dumpster:
-        _parser = DumpsterOrderItem.fromJson;
-        break;
-      case OrderType.scaffolding:
-        _parser = ScaffoldingOrderItem.fromJson;
-        break;
+    order.products.addAll(_parseProducts(json['items'], order.type));
+    switch (order.type) {
       case OrderType.buildingMaterial:
-        _parser = BuildingMaterialOrderItem.fromJson;
+        break;
+      case OrderType.dumpster:
         break;
       case OrderType.finishingMaterial:
-        _parser = FinishingMaterialOrderItem.fromJson;
+        break;
+      case OrderType.scaffolding:
         break;
     }
 
-    var status;
-    switch (json['status']) {
-      case 0:
-        status = OrderStatus.pending;
-        break;
-      case 1:
-        status = OrderStatus.active;
-        break;
-      case 2:
-        status = OrderStatus.closed;
-        break;
-      case 3:
-        status = OrderStatus.rejected;
-        break;
-      case 4:
-        status = OrderStatus.dispatched;
-        break;
-    }
-
-    return Order(_typeFromString(json['service']),
-      id: json['_id'],
-      status: status,
-      note: json['note'],
-      city: json['city'],
-      number: json['orderNo'],
-      total: json['total']?.toDouble(),
-      deliveryFee: json['deliveryFee']?.toDouble() ?? 0.0,
-      createdAt: DateTime.parse(json['createdAt']),
-      payment: Payment.fromJson(/*json['payment'] ?? */json),
-
-      customer: json['customer'] is String ? null : User.fromJson(json['customer']),
-
-      location: OrderLocation.fromJson(json['dropoff']),
-
-      items: (json['items'] as List)
-        .map((item) {
-          var supplier = item['supplier'];
-          if (supplier is Map) {
-            supplier = supplier['_id'];
-          }
-
-          return OrderItemHolder(
-            supplier: supplier,
-            subtotal: item['subtotal']?.toDouble(),
-
-            item: _parser != null ? _parser(item['item']) : null
-          );
-        })
-        .toList(growable: false),
-    );
+    return order;
   }
 
-  Map<String, dynamic> toJson() => {
-    'city': city,
-    'note': note,
-    'total': total,
-    'status': status,
-    'orderNo': number,
-    'deliveryFee': deliveryFee,
-    'service': _typeToString(type),
+  /// Value Added Tax (15%);
+  static const vat = .15;
 
-    'items': items
-        .map((e) => e.serialize())
-        .toList(growable: false),
+  double get subtotal => _subtotal;
+  double get total => subtotal * vat;
 
-    'location': location.serialize(),
+  void addImage(File file) {}
 
-    'customer': customer.serialize(),
-    'paymentType': payment?.type,
-    'paymentIntentId': payment?.intentId,
-  };
-
-  @override Map<String, dynamic> serialize() => toJson();
-
-  static String _typeToString(OrderType type) {
-    switch (type) {
-      case OrderType.dumpster: return 'Construction Dumpster';
-      case OrderType.scaffolding: return 'Scaffolding';
-      case OrderType.buildingMaterial: return 'Building Material';
-      case OrderType.finishingMaterial: return 'Finishing Material';
-    }
-
-    throw 'Unknown type found $type';
-  }
-  static OrderType _typeFromString(String type) {
-    switch (type) {
-      case 'Scaffolding': return OrderType.scaffolding;
-      case 'Building Material': return OrderType.buildingMaterial;
-      case 'Finishing Material': return OrderType.finishingMaterial;
-      case 'Construction Dumpster': return OrderType.dumpster;
-    }
-
-    throw 'Unknown type found $type';
-  }
-}
-
-enum OrderStatus {
-  rejected,
-  pending,
-  active,
-  dispatched,
-  closed,
-}
-enum OrderType {
-  dumpster,
-  scaffolding,
-  buildingMaterial,
-  finishingMaterial
-}
-
-
-// enum UserType { admin, driver, customer, supplier }
-// class OrderUpdater {
-//   String id;
-//   UserType type;
-// }
-//
-// class OrderUpdate {
-//   String updatedBy;
-//   OrderStatus status;
-//
-//   String note;
-//   String message;
-//   DateTime timestamp;
-// }
-
-class _Order {
-  final OrderType type;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-
-  double _total = 0.0;
-  final List<OrderItemHolder> _items = [];
-
-  double get total => _total;
-  List<OrderItemHolder> get items => List.from(_items, growable: false);
-
-  _Order._({
-    this.type,
-    this.createdAt,
-    this.updatedAt
-  });
-
-  factory _Order.create(OrderType type) {
-    final time = DateTime.now();
-    return _Order._(
-      type: type,
-      createdAt: time,
-      updatedAt: time
-    );
+  void removeImage(int index) {
+    images.removeAt(index);
   }
 
-  void addItem({
-    @required OrderItem item,
-    @required double price
-  }) {
-    assert(item != null);
-    assert(item != null && price > 0.0);
-
-    _items.add(OrderItemHolder(
-      item: item, subtotal: price
+  void addProduct(T product, double price) {
+    assert(product != null && price != null);
+    products.add(OrderProductHolder(
+      item: product,
+      subtotal: price,
     ));
 
-    _total += price;
+    _subtotal += price;
   }
 
-  void removeAt(int index) {
-    if (index > 0 && index < _items.length) {
-      _total -= _items.removeAt(index).subtotal;
-    }
-  }
-
-  bool canProceed() {
-    return _items.isNotEmpty;
-  }
+  void clearProducts() => products.clear();
 }
+
+Iterable<OrderProductHolder> _parseProducts(
+    List<dynamic> products,
+    OrderType type,
+    ) {
+  switch (type) {
+    case OrderType.buildingMaterial:
+      return products.map((product) => OrderProductHolder(
+          item: BuildingMaterialOrderable.fromJson(product),
+          supplier: product['supplier'],
+          subtotal: product['subtotal']
+      ));
+    case OrderType.dumpster:
+      return products.map((product) => OrderProductHolder(
+          item: DumpsterOrderable.fromJson(product),
+          supplier: product['supplier'],
+          subtotal: product['subtotal']
+      ));
+    case OrderType.finishingMaterial:
+      return products.map((product) => OrderProductHolder(
+          item: FinishingMaterialOrderable.fromJson(product),
+          supplier: product['supplier'],
+          subtotal: product['subtotal']
+      ));
+    case OrderType.scaffolding:
+    //   return products.map((product) => OrderProductHolder(
+    //     item: BuildingMaterialOrderable.fromJson(product),
+    //     supplier: product['supplier'],
+    //     subtotal: product['subtotal']
+    //   ));
+  }
+
+  return [];
+}
+
