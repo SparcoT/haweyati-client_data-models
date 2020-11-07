@@ -13,23 +13,23 @@ mixin AuthData {
         (await SharedPreferences.getInstance()).getString('access_token');
   }
 
-  Future<void> signIn(Customer customer, String accessToken) async {
-    _user = customer;
-    _accessToken = accessToken;
-
-    await (await SharedPreferences.getInstance())
-        .setString('access_token', accessToken);
-
-    await Hive.lazyBox<Customer>('customers').add(customer);
-    await customer.save();
-  }
-
   Future<void> signOut() async {
     _user = null;
     _accessToken = null;
     await Hive.lazyBox<Customer>('customers').clear();
   }
 
+  Customer get user => _user;
+  set user(Customer customer) {
+    _user = customer;
+
+    Hive.lazyBox<Customer>('customers')
+        .add(customer)
+        .then((value) => customer.save());
+  }
+
   String get accessToken => _accessToken;
+  set accessToken(String token) => _accessToken = token;
+
   bool get isAuthenticated => _user != null;
 }
