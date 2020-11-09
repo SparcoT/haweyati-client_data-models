@@ -16,7 +16,7 @@ class FinishingMaterialOrderable extends OrderableProduct<FinishingMaterial> {
 
   FinishingMaterialOrderable({
     FinishingMaterial product,
-    this.qty,
+    this.qty = 0,
     this.price,
     this.variants,
   }) : super(product);

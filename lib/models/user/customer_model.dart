@@ -12,7 +12,7 @@ part 'customer_model.g.dart';
 class Customer extends BaseModelHive {
   @HiveField(1) String status;
   @HiveField(2) String message;
-  @HiveField(3) $Profile profile;
+  @HiveField(3) Profile profile;
   @HiveField(4) Location location;
 
   String get name => profile.name;

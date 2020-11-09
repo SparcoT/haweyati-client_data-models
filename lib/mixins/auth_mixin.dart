@@ -8,7 +8,11 @@ mixin AuthData {
 
   static Future<void> initiate() async {
     Hive.registerAdapter(CustomerAdapter());
-    _user = await (await Hive.openLazyBox<Customer>('customers')).getAt(0);
+    final box = await Hive.openLazyBox<Customer>('customers');
+
+    if (box.isNotEmpty) {
+      _user = await box.getAt(0);
+    }
     _accessToken =
         (await SharedPreferences.getInstance()).getString('access_token');
   }

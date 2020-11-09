@@ -1,3 +1,4 @@
+import 'package:haweyati_client_data_models/models/image_model.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:haweyati_client_data_models/model.dart';
@@ -10,7 +11,7 @@ class FinishingMaterialBase extends Purchasable {
   @HiveField(1)
   String name;
   @HiveField(2)
-  String image;
+  ImageModel image;
   @HiveField(3)
   String description;
 
@@ -36,7 +37,7 @@ class FinishingMaterial extends FinishingMaterialBase {
 
   FinishingMaterial({
     String name,
-    String image,
+    ImageModel image,
     String description,
     this.variants,
     this.options,
@@ -80,7 +81,7 @@ class FinishingMaterialOption extends BaseModelHive {
   String name;
 
   @HiveField(2)
-  @JsonKey(name: 'optionValue', fromJson: _fun)
+  @JsonKey(name: 'optionValues', fromJson: _fun)
   List<String> values;
 
   FinishingMaterialOption({this.name, List<String> values}) : values = values;
@@ -92,7 +93,7 @@ class FinishingMaterialOption extends BaseModelHive {
 
 List<String> _fun(value) {
   if (value is String) {
-    return value?.split(',');
+    return value?.split(',')?.map((e) => e.trim())?.toList();
   } else if (value is List) {
     return value?.cast<String>();
   }

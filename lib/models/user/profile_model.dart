@@ -6,7 +6,7 @@ part 'profile_model.g.dart';
 
 @HiveType(typeId: 129)
 @JsonSerializable(includeIfNull: false)
-class $Profile extends BaseModelHive {
+class Profile extends BaseModelHive {
   @HiveField(1)
   String name;
 
@@ -23,6 +23,7 @@ class $Profile extends BaseModelHive {
   String password;
 
   @HiveField(6)
+  @JsonKey(name: 'guest')
   bool isGuest;
 
   @HiveField(7)
@@ -38,7 +39,7 @@ class $Profile extends BaseModelHive {
   @JsonKey(name: 'token')
   String deviceToken;
 
-  $Profile({
+  Profile({
     this.name,
     this.email,
     this.contact,
@@ -50,8 +51,10 @@ class $Profile extends BaseModelHive {
     this.deviceToken,
   });
 
-  Map<String, dynamic> toJson() => _$$ProfileToJson(this);
-  factory $Profile.fromJson(json) => _$$ProfileFromJson(json);
+  Map<String, dynamic> toJson() => _$ProfileToJson(this);
+  factory Profile.fromJson(json) => _$ProfileFromJson(json);
+
+  bool hasScope(String value) => scope.contains(value);
 }
 
 /// POST customer/guest-sign-up/

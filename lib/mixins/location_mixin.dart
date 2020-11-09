@@ -26,7 +26,7 @@ mixin LocationData {
   set location(Location details) {
     _city = details.city;
     _address = details.address;
-    // _coordinates = LatLng(details.latitude, details.longitude);
+    _coordinates = LatLng(details.latitude, details.longitude);
 
     SharedPreferences.getInstance().then((value) {
       value.setString('city', _city);
@@ -52,5 +52,5 @@ mixin LocationData {
 
   String get city => _city;
   String get address => _address;
-  LatLng get coordinated => _coordinates;
+  LatLng get coordinates => _coordinates;
 }

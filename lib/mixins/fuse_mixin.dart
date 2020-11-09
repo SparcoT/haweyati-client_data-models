@@ -5,5 +5,5 @@ mixin FuseData {
       (await SharedPreferences.getInstance()).setBool('fuseBurnt', true);
 
   Future<bool> get isFuseBurnt async =>
-      (await SharedPreferences.getInstance()).getBool('fuseBurnt');
+      (await SharedPreferences.getInstance()).getBool('fuseBurnt') ?? false;
 }

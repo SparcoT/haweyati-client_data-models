@@ -15,9 +15,6 @@ part 'order_model.g.dart';
 
 @HiveType(typeId: 190)
 enum OrderType {
-  @HiveField(0)
-  @JsonValue('Building Material')
-  buildingMaterial,
   @HiveField(1)
   @JsonValue('Construction Dumpster')
   dumpster,
@@ -27,6 +24,9 @@ enum OrderType {
   @HiveField(3)
   @JsonValue('Scaffolding')
   scaffolding,
+  @HiveField(0)
+  @JsonValue('Building Material')
+  buildingMaterial,
 }
 
 @HiveType(typeId: 191)
@@ -100,7 +100,9 @@ class OrderLocation extends Location {
   }) : super(
           latitude: 2,
           longitude: 1,
-        );
+        ) {
+    dropOffDate = DateTime.now();
+  }
 
   void update(Location location) {
     city = location?.city;
@@ -157,39 +159,60 @@ abstract class OrderableProduct<T extends Purchasable> extends HiveObject {
   set product(T t) => _product = t;
 }
 
-@HiveType(typeId: 179)
+// @HiveType(typeId: 179)
 @JsonSerializable(includeIfNull: false)
 class Order<T extends OrderableProduct> extends BaseModelHive {
+  @HiveField(1)
   String city;
+  @HiveField(2)
   String note;
+  @HiveField(3)
   String number;
+  @HiveField(4)
   double deliveryFee;
 
+  @HiveField(5)
   double _subtotal = 0.0;
 
+  @HiveField(6)
   OrderType type;
+  @HiveField(7)
   OrderStatus status;
 
+  @HiveField(8)
   Customer customer;
 
+  @HiveField(9)
   OrderPayment payment;
+  @HiveField(10)
   OrderLocation _location;
 
+  @HiveField(11)
   List<OrderImage> images;
 
   @JsonKey(ignore: true)
-  List<OrderProductHolder> products;
+  @HiveField(12)
+  List<OrderProductHolder<T>> products;
 
+  @HiveField(13)
   DateTime createdAt;
+  @HiveField(14)
   DateTime updatedAt;
 
-  Order({
+  Order(this.type, {
     this.note,
-    this.number,
+    this.number
   }) {
     images ??= [];
     products ??= [];
     _location ??= OrderLocation.fromAppData();
+  }
+
+  OrderLocation get location => _location;
+  set location(OrderLocation location) {
+    if (location != null) {
+      _location = location;
+    }
   }
 
   Map<String, dynamic> toJson() => _$OrderToJson(this)
@@ -216,7 +239,7 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
   static const vat = .15;
 
   double get subtotal => _subtotal;
-  double get total => subtotal * vat;
+  double get total => subtotal + subtotal * vat;
 
   void addImage(File file) {}
 
@@ -234,7 +257,10 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
     _subtotal += price;
   }
 
-  void clearProducts() => products.clear();
+  void clearProducts() {
+    products.clear();
+    _subtotal = 0;
+  }
 }
 
 Iterable<OrderProductHolder> _parseProducts(

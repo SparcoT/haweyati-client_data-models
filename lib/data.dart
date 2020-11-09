@@ -17,6 +17,7 @@ export 'models/others/available-services_model.dart';
 export 'models/user/customer_model.dart';
 export 'models/user/profile_model.dart';
 
+export 'models/time-slot_model.dart';
 export 'models/order/order_model.dart';
 export 'models/order/products/building-material_orderable.dart';
 export 'models/order/products/dumpster_orderable.dart';
