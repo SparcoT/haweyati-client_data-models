@@ -1,12 +1,14 @@
-import 'package:haweyati_client_data_models/models/user/customer_model.dart';
 import 'package:hive/hive.dart';
+import 'package:haweyati_client_data_models/data.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:haweyati_client_data_models/models/user/customer_model.dart';
 
 mixin AuthData {
   static Customer _user;
   static String _accessToken;
 
   static Future<void> initiate() async {
+    Hive.registerAdapter(ProfileAdapter());
     Hive.registerAdapter(CustomerAdapter());
     final box = await Hive.openLazyBox<Customer>('customers');
 

@@ -1,5 +1,6 @@
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:haweyati_client_data_models/models/others/location_model.dart';
+import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 mixin LocationData {
@@ -8,6 +9,7 @@ mixin LocationData {
   static LatLng _coordinates;
 
   static Future<void> initiate() async {
+    Hive.registerAdapter(LocationAdapter());
     final preferences = await SharedPreferences.getInstance();
 
     _city = preferences.get('city');

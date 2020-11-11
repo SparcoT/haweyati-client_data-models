@@ -38,6 +38,11 @@ class BuildingMaterial extends BuildingMaterialBase {
     final city = AppData().city;
     final material = _$BuildingMaterialFromJson(json);
 
+    print('started dumpster parsing');
+    final dumpster = _$BuildingMaterialFromJson(json);
+    print(dumpster);
+    print('ended dumpster parsing');
+
     if (material.pricing.isNotEmpty) {
       material.pricing = [
         material.pricing.firstWhere((element) => element.city == city)

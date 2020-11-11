@@ -30,10 +30,10 @@ class AppData with AuthData, FuseData, LocationData, CartDate, LocaleData {
   static Future initiate() async {
     await Hive.initFlutter();
 
+    await LocationData.initiate();
     await AuthData.initiate();
     await CartDate.initiate();
     await LocaleData.initiate();
-    await LocationData.initiate();
 
     _isInitiated = true;
   }

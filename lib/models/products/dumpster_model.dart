@@ -26,7 +26,10 @@ class Dumpster extends Purchasable {
 
   Map<String, dynamic> toJson() => _$DumpsterToJson(this);
   factory Dumpster.fromJson(json) {
+    print('started dumpster parsing');
     final dumpster = _$DumpsterFromJson(json);
+    print(dumpster);
+    print('ended dumpster parsing');
 
     dumpster.pricing = [
       dumpster.pricing.firstWhere((element) => element.city == AppData().city)

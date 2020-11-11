@@ -20,5 +20,13 @@ class DumpsterOrderable extends OrderableProduct<Dumpster> {
   }): super(product);
 
   Map<String, dynamic> toJson() => _$DumpsterOrderableToJson(this);
-  factory DumpsterOrderable.fromJson(json) => _$DumpsterOrderableFromJson(json);
+  factory DumpsterOrderable.fromJson(json) {
+    final dumpster = _$DumpsterOrderableFromJson(json);
+
+    print(dumpster);
+    print(dumpster.qty);
+    print(dumpster.product);
+
+    return dumpster;
+  }
 }
