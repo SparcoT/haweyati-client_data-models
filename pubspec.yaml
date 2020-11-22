@@ -13,6 +13,7 @@ dependencies:
   json_serializable:
   shared_preferences:
   google_maps_flutter:
+  firebase_dynamic_links:
 
   flutter:
     sdk: flutter
