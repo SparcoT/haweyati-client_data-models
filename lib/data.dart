@@ -22,6 +22,7 @@ export 'models/order/order_model.dart';
 export 'models/order/products/building-material_orderable.dart';
 export 'models/order/products/dumpster_orderable.dart';
 export 'models/order/products/finishing-material_orderable.dart';
+export 'models/notification_model.dart';
 
 class AppData with AuthData, FuseData, LocationData, CartDate, LocaleData {
   AppData._();
