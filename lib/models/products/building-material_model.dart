@@ -1,5 +1,6 @@
 import 'package:haweyati_client_data_models/data.dart';
 import 'package:haweyati_client_data_models/models/image_model.dart';
+import 'package:haweyati_client_data_models/models/products/building_material_price_model.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:haweyati_client_data_models/model.dart';
@@ -14,6 +15,7 @@ class BuildingMaterialBase extends Purchasable {
   String description;
 
   BuildingMaterialBase({this.name, this.image, this.description});
+
   factory BuildingMaterialBase.fromJson(json) =>
       _$BuildingMaterialBaseFromJson(json);
 }
@@ -30,10 +32,8 @@ class BuildingMaterial extends BuildingMaterialBase {
           description: description,
         );
 
-  double get price12 => pricing.first.price12yard;
-  double get price20 => pricing.first.price20yard;
-
   Map<String, dynamic> toJson() => _$BuildingMaterialToJson(this);
+
   factory BuildingMaterial.fromJson(json) {
     final city = AppData().city;
     final material = _$BuildingMaterialFromJson(json);
@@ -52,7 +52,6 @@ class BuildingMaterial extends BuildingMaterialBase {
     return material;
   }
 
-
   BuildingMaterial.from(BuildingMaterial material) {
     name = material.name;
     image = material.image;
@@ -65,12 +64,12 @@ class BuildingMaterial extends BuildingMaterialBase {
 @JsonSerializable(includeIfNull: false)
 class BuildingMaterialPricing extends BaseModelHive {
   String city;
-  double price12yard;
-  double price20yard;
+  List<BMPrice> price;
 
-  BuildingMaterialPricing({this.city, this.price12yard, this.price20yard});
+  BuildingMaterialPricing({this.city, this.price});
 
   Map<String, dynamic> toJson() => _$BuildingMaterialPricingToJson(this);
+
   factory BuildingMaterialPricing.fromJson(json) =>
       _$BuildingMaterialPricingFromJson(json);
 }

@@ -123,8 +123,9 @@ BuildingMaterialPricing _$BuildingMaterialPricingFromJson(
     Map<String, dynamic> json) {
   return BuildingMaterialPricing(
     city: json['city'] as String,
-    price12yard: (json['price12yard'] as num)?.toDouble(),
-    price20yard: (json['price20yard'] as num)?.toDouble(),
+    price: (json['price'] as List)
+        ?.map((e) => e == null ? null : BMPrice.fromJson(e))
+        ?.toList(),
   )..id = json['_id'] as String;
 }
 
@@ -141,7 +142,6 @@ Map<String, dynamic> _$BuildingMaterialPricingToJson(
   }
 
   writeNotNull('city', instance.city);
-  writeNotNull('price12yard', instance.price12yard);
-  writeNotNull('price20yard', instance.price20yard);
+  writeNotNull('price', instance.price);
   return val;
 }

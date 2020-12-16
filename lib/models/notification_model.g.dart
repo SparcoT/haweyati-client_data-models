@@ -13,7 +13,8 @@ NotificationRequest _$NotificationRequestFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$NotificationRequestToJson(NotificationRequest instance) =>
+Map<String, dynamic> _$NotificationRequestToJson(
+        NotificationRequest instance) =>
     <String, dynamic>{
       'title': instance.title,
       'body': instance.body,
