@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:hive/hive.dart';
+import '../../data.dart';
 import 'products/dumpster_orderable.dart';
 import 'products/building-material_orderable.dart';
 import 'products/finishing-material_orderable.dart';
@@ -348,8 +349,8 @@ OrderLocation locationFromJson(Map<String, dynamic> json) {
   return OrderLocation(
     longitude: json['dropoffLocation']['longitude'],
     latitude: json['dropoffLocation']['latitude'],
-    dropOffDate: json['dropoffDate'],
-    dropOffTime: json['dropoffTime'],
+    dropOffDate: DateTime.parse(json['dropoffDate']),
+    dropOffTime: TimeSlot.fromJson(json['dropoffTime']),
   )..address = json['dropOffAddress'];
 }
 
