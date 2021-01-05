@@ -18,23 +18,20 @@ class BuildingMaterialOrderableAdapter
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BuildingMaterialOrderable(
-      fields[2] as BuildingMaterialSize,
       product: fields[0] as BuildingMaterial,
       qty: fields[1] as int,
-      price: fields[3] as double,
+      price: fields[2] as BMPrice,
     );
   }
 
   @override
   void write(BinaryWriter writer, BuildingMaterialOrderable obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(3)
       ..writeByte(1)
       ..write(obj.qty)
-      ..writeByte(3)
-      ..write(obj.price)
       ..writeByte(2)
-      ..write(obj.size)
+      ..write(obj.price)
       ..writeByte(0)
       ..write(obj.product);
   }
@@ -57,12 +54,11 @@ class BuildingMaterialOrderableAdapter
 BuildingMaterialOrderable _$BuildingMaterialOrderableFromJson(
     Map<String, dynamic> json) {
   return BuildingMaterialOrderable(
-    _$enumDecodeNullable(_$BuildingMaterialSizeEnumMap, json['size']),
     product: json['product'] == null
         ? null
         : BuildingMaterial.fromJson(json['product']),
     qty: json['qty'] as int,
-    price: (json['price'] as num)?.toDouble(),
+    price: json['price'] == null ? null : BMPrice.fromJson(json['price']),
   );
 }
 
@@ -79,43 +75,5 @@ Map<String, dynamic> _$BuildingMaterialOrderableToJson(
   writeNotNull('product', instance.product);
   writeNotNull('qty', instance.qty);
   writeNotNull('price', instance.price);
-  writeNotNull('size', _$BuildingMaterialSizeEnumMap[instance.size]);
   return val;
 }
-
-T _$enumDecode<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    throw ArgumentError('A value must be provided. Supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-
-  final value = enumValues.entries
-      .singleWhere((e) => e.value == source, orElse: () => null)
-      ?.key;
-
-  if (value == null && unknownValue == null) {
-    throw ArgumentError('`$source` is not one of the supported values: '
-        '${enumValues.values.join(', ')}');
-  }
-  return value ?? unknownValue;
-}
-
-T _$enumDecodeNullable<T>(
-  Map<T, dynamic> enumValues,
-  dynamic source, {
-  T unknownValue,
-}) {
-  if (source == null) {
-    return null;
-  }
-  return _$enumDecode<T>(enumValues, source, unknownValue: unknownValue);
-}
-
-const _$BuildingMaterialSizeEnumMap = {
-  BuildingMaterialSize.yards12: '12 Yards',
-  BuildingMaterialSize.yards20: '20 Yards',
-};

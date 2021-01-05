@@ -21,6 +21,8 @@ class OrderTypeAdapter extends TypeAdapter<OrderType> {
         return OrderType.scaffolding;
       case 0:
         return OrderType.buildingMaterial;
+      case 4:
+        return OrderType.deliveryVehicle;
       default:
         return null;
     }
@@ -40,6 +42,9 @@ class OrderTypeAdapter extends TypeAdapter<OrderType> {
         break;
       case OrderType.buildingMaterial:
         writer.writeByte(0);
+        break;
+      case OrderType.deliveryVehicle:
+        writer.writeByte(4);
         break;
     }
   }
@@ -420,6 +425,7 @@ const _$OrderTypeEnumMap = {
   OrderType.finishingMaterial: 'Finishing Material',
   OrderType.scaffolding: 'Scaffolding',
   OrderType.buildingMaterial: 'Building Material',
+  OrderType.deliveryVehicle: 'Delivery Vehicle',
 };
 
 const _$OrderStatusEnumMap = {

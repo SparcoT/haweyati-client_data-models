@@ -28,6 +28,9 @@ enum OrderType {
   @HiveField(0)
   @JsonValue('Building Material')
   buildingMaterial,
+  @HiveField(4)
+  @JsonValue('Delivery Vehicle')
+  deliveryVehicle,
 }
 
 @HiveType(typeId: 191)

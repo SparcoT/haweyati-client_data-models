@@ -134,12 +134,7 @@ FinishingMaterial _$FinishingMaterialFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$FinishingMaterialToJson(FinishingMaterial instance) {
-  final val = <String, dynamic>{
-    '_id': instance.id,
-    'name': instance.name,
-    'image': instance.image,
-    'description': instance.description,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -147,6 +142,10 @@ Map<String, dynamic> _$FinishingMaterialToJson(FinishingMaterial instance) {
     }
   }
 
+  writeNotNull('_id', instance.id);
+  val['name'] = instance.name;
+  val['image'] = instance.image;
+  val['description'] = instance.description;
   writeNotNull('price', instance.price);
   writeNotNull('parent', instance.parent);
   writeNotNull('varient', instance.variants);
@@ -164,9 +163,7 @@ FinishingMaterialOption _$FinishingMaterialOptionFromJson(
 
 Map<String, dynamic> _$FinishingMaterialOptionToJson(
     FinishingMaterialOption instance) {
-  final val = <String, dynamic>{
-    '_id': instance.id,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -174,6 +171,7 @@ Map<String, dynamic> _$FinishingMaterialOptionToJson(
     }
   }
 
+  writeNotNull('_id', instance.id);
   writeNotNull('optionName', instance.name);
   writeNotNull('optionValues', instance.values);
   return val;

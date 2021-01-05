@@ -2,6 +2,8 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:haweyati_client_data_models/model.dart';
 
+import '../image_model.dart';
+
 part 'profile_model.g.dart';
 
 @HiveType(typeId: 129)
@@ -30,7 +32,7 @@ class Profile extends BaseModelHive {
   bool isVerified;
 
   @HiveField(8)
-  String image;
+  ImageModel image;
 
   @HiveField(9)
   List<String> scope;

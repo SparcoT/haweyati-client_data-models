@@ -1,3 +1,4 @@
+import 'package:haweyati_client_data_models/models/image_model.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:haweyati_client_data_models/mixins/auth_mixin.dart';
@@ -31,10 +32,12 @@ class AppData with AuthData, FuseData, LocationData, CartDate, LocaleData {
   static Future initiate() async {
     await Hive.initFlutter();
 
+    Hive.registerAdapter(ImageModelAdapter());
     await LocationData.initiate();
     await AuthData.initiate();
     await CartDate.initiate();
     await LocaleData.initiate();
+
 
     _isInitiated = true;
   }

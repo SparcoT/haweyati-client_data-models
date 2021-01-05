@@ -27,7 +27,7 @@ class ProfileAdapter extends TypeAdapter<Profile> {
       isVerified: fields[7] as bool,
       deviceToken: fields[10] as String,
     )
-      ..image = fields[8] as String
+      ..image = fields[8] as ImageModel
       ..id = fields[0] as String;
   }
 
@@ -87,7 +87,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) {
     deviceToken: json['token'] as String,
   )
     ..id = json['_id'] as String
-    ..image = json['image'] as String;
+    ..image = json['image'] == null ? null : ImageModel.fromJson(json['image']);
 }
 
 Map<String, dynamic> _$ProfileToJson(Profile instance) {
