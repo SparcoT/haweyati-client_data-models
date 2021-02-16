@@ -7,6 +7,8 @@ import 'package:haweyati_client_data_models/mixins/fuse_mixin.dart';
 import 'package:haweyati_client_data_models/mixins/locale_mixin.dart';
 import 'package:haweyati_client_data_models/mixins/location_mixin.dart';
 
+import 'models/user/supplier_model.dart';
+
 /// Export All Models;
 export 'models/products/building-material_model.dart';
 export 'models/products/dumpster_model.dart';
@@ -33,6 +35,7 @@ class AppData with AuthData, FuseData, LocationData, CartDate, LocaleData {
     await Hive.initFlutter();
 
     Hive.registerAdapter(ImageModelAdapter());
+    Hive.registerAdapter(SupplierAdapter());
     await LocationData.initiate();
     await AuthData.initiate();
     await CartDate.initiate();

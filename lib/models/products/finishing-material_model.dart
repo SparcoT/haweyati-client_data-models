@@ -3,7 +3,6 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:haweyati_client_data_models/model.dart';
 import 'package:haweyati_client_data_models/models/order/order_model.dart';
-
 part 'finishing-material_model.g.dart';
 
 @JsonSerializable(createToJson: false)
@@ -14,8 +13,17 @@ class FinishingMaterialBase extends Purchasable {
   ImageModel image;
   @HiveField(3)
   String description;
-
-  FinishingMaterialBase({this.name, this.image, this.description});
+  @HiveField(8)
+  double volumetricWeight;
+  @HiveField(9)
+  double cbmLength;
+  @HiveField(10)
+  double cbmWidth;
+  @HiveField(11)
+  double cbmHeight;
+  FinishingMaterialBase({this.name, this.image,
+    this.cbmHeight,this.cbmLength,this.cbmWidth,
+    this.description,this.volumetricWeight});
   factory FinishingMaterialBase.fromJson(json) =>
       _$FinishingMaterialBaseFromJson(json);
 }
@@ -39,24 +47,50 @@ class FinishingMaterial extends FinishingMaterialBase {
     String name,
     ImageModel image,
     String description,
+    double volumetricWeight,
     this.variants,
     this.options,
   }) : super(
           name: name,
           image: image,
           description: description,
+    volumetricWeight: volumetricWeight
         );
 
   Map<String, dynamic> toJson() => _$FinishingMaterialToJson(this);
   factory FinishingMaterial.fromJson(json) => _$FinishingMaterialFromJson(json);
 
 
+  Tuple<double, Map<String, dynamic>> variant(Map<String, dynamic> variant) {
+    for (final _variant in variants) {
+      var flag = true;
+
+      for (final key in _variant.keys) {
+        if (key == 'price' || key =='cbmWidth' || key == 'volumetricWeight' ||
+            key == 'cbmLength' || key == 'cbmHeight') continue;
+        if (variant[key] != _variant[key]) {
+          flag = false;
+          break;
+        }
+      }
+
+      if (flag) {
+        return Tuple(double.tryParse(_variant['price'])
+            ?? int.tryParse(_variant['price']).toDouble() ?? 0.0, _variant);
+      }
+    }
+
+    return Tuple(0.0, null);
+  }
+
+  @deprecated
   double variantPrice(Map<String, dynamic> variant) {
     for (final _variant in variants) {
       var flag = true;
 
       for (final key in _variant.keys) {
-        if (key == 'price') continue;
+        if (key == 'price' || key =='cbmWidth' || key == 'volumetricWeight' ||
+            key == 'cbmLength' || key == 'cbmHeight') continue;
         if (variant[key] != _variant[key]) {
           flag = false;
           break;
@@ -65,7 +99,7 @@ class FinishingMaterial extends FinishingMaterialBase {
 
       if (flag) {
         return double.tryParse(_variant['price'])
-          ?? int.tryParse(_variant['price']).toDouble() ?? 0.0;
+            ?? int.tryParse(_variant['price']).toDouble() ?? 0.0;
       }
     }
 
@@ -89,6 +123,12 @@ class FinishingMaterialOption extends BaseModelHive {
   Map<String, dynamic> toJson() => _$FinishingMaterialOptionToJson(this);
   factory FinishingMaterialOption.fromJson(json) =>
       _$FinishingMaterialOptionFromJson(json);
+}
+
+class Tuple<T, U> {
+  final T first;
+  U second;
+  Tuple(this.first, this.second);
 }
 
 List<String> _fun(value) {

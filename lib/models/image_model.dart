@@ -8,7 +8,7 @@ part 'image_model.g.dart';
 class ImageModel {
   @HiveField(0)
   String name;
-  ImageModel();
+  ImageModel({this.name});
 
   Map<String, dynamic> toJson() => _$ImageModelToJson(this);
   factory ImageModel.fromJson(json) => _$ImageModelFromJson(json);

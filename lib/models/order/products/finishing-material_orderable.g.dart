@@ -15,6 +15,7 @@ FinishingMaterialOrderable _$FinishingMaterialOrderableFromJson(
     qty: json['qty'] as int,
     price: (json['price'] as num)?.toDouble(),
     variants: json['variants'] as Map<String, dynamic>,
+    selected: json['selected'] as bool,
   );
 }
 
@@ -25,4 +26,5 @@ Map<String, dynamic> _$FinishingMaterialOrderableToJson(
       'qty': instance.qty,
       'price': instance.price,
       'variants': instance.variants,
+      'selected': instance.selected,
     };

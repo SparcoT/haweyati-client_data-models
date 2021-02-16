@@ -25,7 +25,7 @@ class Profile extends BaseModelHive {
   String password;
 
   @HiveField(6)
-  @JsonKey(name: 'guest')
+  @JsonKey(name: 'guest',nullable: true,defaultValue: false)
   bool isGuest;
 
   @HiveField(7)

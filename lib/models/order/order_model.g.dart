@@ -67,22 +67,20 @@ class OrderStatusAdapter extends TypeAdapter<OrderStatus> {
   @override
   OrderStatus read(BinaryReader reader) {
     switch (reader.readByte()) {
-      case 7:
-        return OrderStatus.canceled;
       case 0:
         return OrderStatus.pending;
       case 1:
-        return OrderStatus.approved;
-      case 2:
         return OrderStatus.accepted;
-      case 3:
+      case 2:
         return OrderStatus.preparing;
-      case 4:
+      case 3:
         return OrderStatus.dispatched;
-      case 5:
+      case 4:
         return OrderStatus.delivered;
-      case 6:
+      case 5:
         return OrderStatus.rejected;
+      case 7:
+        return OrderStatus.canceled;
       default:
         return null;
     }
@@ -91,29 +89,26 @@ class OrderStatusAdapter extends TypeAdapter<OrderStatus> {
   @override
   void write(BinaryWriter writer, OrderStatus obj) {
     switch (obj) {
-      case OrderStatus.canceled:
-        writer.writeByte(7);
-        break;
       case OrderStatus.pending:
         writer.writeByte(0);
         break;
-      case OrderStatus.approved:
+      case OrderStatus.accepted:
         writer.writeByte(1);
         break;
-      case OrderStatus.accepted:
+      case OrderStatus.preparing:
         writer.writeByte(2);
         break;
-      case OrderStatus.preparing:
+      case OrderStatus.dispatched:
         writer.writeByte(3);
         break;
-      case OrderStatus.dispatched:
+      case OrderStatus.delivered:
         writer.writeByte(4);
         break;
-      case OrderStatus.delivered:
+      case OrderStatus.rejected:
         writer.writeByte(5);
         break;
-      case OrderStatus.rejected:
-        writer.writeByte(6);
+      case OrderStatus.canceled:
+        writer.writeByte(7);
         break;
     }
   }
@@ -356,6 +351,11 @@ Order<T> _$OrderFromJson<T extends OrderableProduct<Purchasable>>(
     ..updatedAt = json['updatedAt'] == null
         ? null
         : DateTime.parse(json['updatedAt'] as String)
+    ..driver = json['driver'] == null
+        ? null
+        : Driver.fromJson(json['driver'] as Map<String, dynamic>)
+    ..supplier =
+        json['supplier'] == null ? null : Supplier.fromJson(json['supplier'])
     ..total = (json['total'] as num)?.toDouble();
 }
 
@@ -384,6 +384,8 @@ Map<String, dynamic> _$OrderToJson<T extends OrderableProduct<Purchasable>>(
   writeNotNull('images', instance.images);
   writeNotNull('createdAt', instance.createdAt?.toIso8601String());
   writeNotNull('updatedAt', instance.updatedAt?.toIso8601String());
+  writeNotNull('driver', instance.driver);
+  writeNotNull('supplier', instance.supplier);
   writeNotNull('total', instance.total);
   return val;
 }
@@ -429,12 +431,11 @@ const _$OrderTypeEnumMap = {
 };
 
 const _$OrderStatusEnumMap = {
-  OrderStatus.canceled: 7,
   OrderStatus.pending: 0,
-  OrderStatus.approved: 1,
-  OrderStatus.accepted: 2,
-  OrderStatus.preparing: 3,
-  OrderStatus.dispatched: 4,
-  OrderStatus.delivered: 5,
-  OrderStatus.rejected: 6,
+  OrderStatus.accepted: 1,
+  OrderStatus.preparing: 2,
+  OrderStatus.dispatched: 3,
+  OrderStatus.delivered: 4,
+  OrderStatus.rejected: 5,
+  OrderStatus.canceled: 7,
 };

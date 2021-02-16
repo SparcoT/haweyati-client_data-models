@@ -86,6 +86,10 @@ BuildingMaterialBase _$BuildingMaterialBaseFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     image: json['image'] == null ? null : ImageModel.fromJson(json['image']),
     description: json['description'] as String,
+    volumetricWeight: (json['volumetricWeight'] as num)?.toDouble(),
+    cbmHeight: (json['cbmHeight'] as num)?.toDouble(),
+    cbmLength: (json['cbmLength'] as num)?.toDouble(),
+    cbmWidth: (json['cbmWidth'] as num)?.toDouble(),
   )..id = json['_id'] as String;
 }
 
@@ -94,15 +98,28 @@ BuildingMaterial _$BuildingMaterialFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     image: json['image'] == null ? null : ImageModel.fromJson(json['image']),
     description: json['description'] as String,
+    volumetricWeight: (json['volumetricWeight'] as num)?.toDouble(),
   )
     ..id = json['_id'] as String
+    ..cbmHeight = (json['cbmHeight'] as num)?.toDouble()
+    ..cbmLength = (json['cbmLength'] as num)?.toDouble()
+    ..cbmWidth = (json['cbmWidth'] as num)?.toDouble()
     ..pricing = (json['pricing'] as List)
         ?.map((e) => e == null ? null : BuildingMaterialPricing.fromJson(e))
         ?.toList();
 }
 
 Map<String, dynamic> _$BuildingMaterialToJson(BuildingMaterial instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    '_id': instance.id,
+    'name': instance.name,
+    'image': instance.image,
+    'description': instance.description,
+    'volumetricWeight': instance.volumetricWeight,
+    'cbmHeight': instance.cbmHeight,
+    'cbmLength': instance.cbmLength,
+    'cbmWidth': instance.cbmWidth,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -110,10 +127,6 @@ Map<String, dynamic> _$BuildingMaterialToJson(BuildingMaterial instance) {
     }
   }
 
-  writeNotNull('_id', instance.id);
-  val['name'] = instance.name;
-  val['image'] = instance.image;
-  val['description'] = instance.description;
   writeNotNull('pricing', instance.pricing);
   return val;
 }
@@ -130,7 +143,9 @@ BuildingMaterialPricing _$BuildingMaterialPricingFromJson(
 
 Map<String, dynamic> _$BuildingMaterialPricingToJson(
     BuildingMaterialPricing instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    '_id': instance.id,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -138,7 +153,6 @@ Map<String, dynamic> _$BuildingMaterialPricingToJson(
     }
   }
 
-  writeNotNull('_id', instance.id);
   writeNotNull('city', instance.city);
   writeNotNull('price', instance.price);
   return val;

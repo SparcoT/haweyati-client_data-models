@@ -10,7 +10,7 @@ mixin AuthData {
   static Future<void> initiate() async {
     Hive.registerAdapter(ProfileAdapter());
     Hive.registerAdapter(CustomerAdapter());
-    //Uncomment to clear customer
+    // Uncomment to clear customer
     // Hive.openBox('customers').then((value) => value.clear());
     final box = await Hive.openLazyBox<Customer>('customers');
 

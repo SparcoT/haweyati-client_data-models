@@ -5,7 +5,6 @@ import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:haweyati_client_data_models/model.dart';
 import 'package:haweyati_client_data_models/models/order/order_model.dart';
-
 part 'building-material_model.g.dart';
 
 @JsonSerializable(createToJson: false)
@@ -13,8 +12,13 @@ class BuildingMaterialBase extends Purchasable {
   String name;
   ImageModel image;
   String description;
+  double volumetricWeight;
+  double cbmHeight;
+  double cbmLength;
+  double cbmWidth;
 
-  BuildingMaterialBase({this.name, this.image, this.description});
+  BuildingMaterialBase({this.name, this.image, this.description,this.volumetricWeight,
+  this.cbmHeight,this.cbmLength,this.cbmWidth});
 
   factory BuildingMaterialBase.fromJson(json) =>
       _$BuildingMaterialBaseFromJson(json);
@@ -25,11 +29,12 @@ class BuildingMaterialBase extends Purchasable {
 class BuildingMaterial extends BuildingMaterialBase {
   List<BuildingMaterialPricing> pricing;
 
-  BuildingMaterial({String name, ImageModel image, String description})
+  BuildingMaterial({String name, ImageModel image, String description,double volumetricWeight})
       : super(
           name: name,
           image: image,
           description: description,
+          volumetricWeight: volumetricWeight,
         );
 
   Map<String, dynamic> toJson() => _$BuildingMaterialToJson(this);
@@ -38,10 +43,10 @@ class BuildingMaterial extends BuildingMaterialBase {
     final city = AppData().city;
     final material = _$BuildingMaterialFromJson(json);
 
-    print('started dumpster parsing');
+    print('started building material parsing');
     final dumpster = _$BuildingMaterialFromJson(json);
     print(dumpster);
-    print('ended dumpster parsing');
+    print('ended building material parsing');
 
     if (material.pricing.isNotEmpty) {
       material.pricing = [

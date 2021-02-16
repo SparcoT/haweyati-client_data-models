@@ -9,6 +9,7 @@ class Location {
   @HiveField(0) String city;
   @HiveField(1) String address;
   @HiveField(2) double latitude;
+
   @HiveField(3) double longitude;
 
   Location({
@@ -19,5 +20,10 @@ class Location {
   });
 
   Map<String, dynamic> toJson() => _$LocationToJson(this);
-  factory Location.fromJson(json) => _$LocationFromJson(json);
+  factory Location.fromJson(json) {
+    json['latitude'] = double.parse(json['latitude']?.toString() ?? '0.0');
+    json['longitude'] = double.parse(json['longitude']?.toString() ?? '0.0');
+    var loc = _$LocationFromJson(json);
+    return loc;
+  }
 }

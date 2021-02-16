@@ -18,16 +18,14 @@ class SingleScaffoldingOrderable extends OrderableProduct<SingleScaffolding> {
   SingleScaffoldingOrderable({
     SingleScaffolding product,
     this.qty = 1,
-    this.days = 1,
-    this.wheels,
-    this.connections,
+    this.days = 0,
+    this.wheels= 0,
+    this.connections=0,
     this.mesh,
-    this.meshQty
+    this.meshQty= 1,
   }): super(product);
 
   Map<String, dynamic> toJson() => _$SingleScaffoldingOrderableToJson(this);
-  factory SingleScaffoldingOrderable.fromJson(json) {
-    final dumpster = _$SingleScaffoldingOrderableFromJson(json);
-    return dumpster;
-  }
+  factory SingleScaffoldingOrderable.fromJson(json)=> _$SingleScaffoldingOrderableFromJson(json);
+
 }

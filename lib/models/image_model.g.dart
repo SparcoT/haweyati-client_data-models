@@ -16,7 +16,9 @@ class ImageModelAdapter extends TypeAdapter<ImageModel> {
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return ImageModel()..name = fields[0] as String;
+    return ImageModel(
+      name: fields[0] as String,
+    );
   }
 
   @override
@@ -43,7 +45,9 @@ class ImageModelAdapter extends TypeAdapter<ImageModel> {
 // **************************************************************************
 
 ImageModel _$ImageModelFromJson(Map<String, dynamic> json) {
-  return ImageModel()..name = json['name'] as String;
+  return ImageModel(
+    name: json['name'] as String,
+  );
 }
 
 Map<String, dynamic> _$ImageModelToJson(ImageModel instance) =>

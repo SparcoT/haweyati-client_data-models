@@ -13,7 +13,15 @@ class SingleScaffolding extends Purchasable {
   String description;
   @HiveField(3)
   List<SingleScaffoldingPricing> pricing;
-  SingleScaffolding({this.type,this.description,this.pricing});
+  @HiveField(4)
+  double volumetricWeight;
+  @HiveField(5)
+  double cbmHeight;
+  @HiveField(6)
+  double cbmLength;
+  @HiveField(7)
+  double cbmWidth;
+  SingleScaffolding({this.cbmHeight,this.cbmLength,this.cbmWidth, this.type,this.description,this.pricing,this.volumetricWeight});
 
   int get days => pricing.first.days;
   double get rent => pricing.first.rent;
@@ -21,9 +29,11 @@ class SingleScaffolding extends Purchasable {
   double get extraDayRent => pricing.first.extraDayRent;
   double get wheels => pricing.first.wheels;
   double get connections => pricing.first.connections;
+  double meshPrice (String type) => type == 'half' ? mesh.half : mesh.full;
 
   Map<String, dynamic> toJson() => _$SingleScaffoldingToJson(this);
   factory SingleScaffolding.fromJson(json) {
+    print(json);
     final dumpster = _$SingleScaffoldingFromJson(json);
 
     dumpster.pricing = [

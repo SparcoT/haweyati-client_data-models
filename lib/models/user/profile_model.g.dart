@@ -82,7 +82,7 @@ Profile _$ProfileFromJson(Map<String, dynamic> json) {
     username: json['username'] as String,
     password: json['password'] as String,
     scope: (json['scope'] as List)?.map((e) => e as String)?.toList(),
-    isGuest: json['guest'] as bool,
+    isGuest: json['guest'] as bool ?? false,
     isVerified: json['isVerified'] as bool,
     deviceToken: json['token'] as String,
   )

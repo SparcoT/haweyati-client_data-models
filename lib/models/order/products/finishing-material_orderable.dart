@@ -13,12 +13,15 @@ class FinishingMaterialOrderable extends OrderableProduct<FinishingMaterial> {
   double price;
   @HiveField(3)
   Map<String, dynamic> variants;
+  @HiveField(4)
+  bool selected;
 
   FinishingMaterialOrderable({
     FinishingMaterial product,
     this.qty = 0,
     this.price,
     this.variants,
+    this.selected=false
   }) : super(product);
 
   Map<String, dynamic> toJson() => _$FinishingMaterialOrderableToJson(this);

@@ -20,6 +20,7 @@ class FinishingMaterialAdapter extends TypeAdapter<FinishingMaterial> {
       name: fields[1] as String,
       image: fields[2] as ImageModel,
       description: fields[3] as String,
+      volumetricWeight: fields[8] as double,
       variants: (fields[6] as List)
           ?.map((dynamic e) => (e as Map)?.cast<String, dynamic>())
           ?.toList(),
@@ -27,13 +28,16 @@ class FinishingMaterialAdapter extends TypeAdapter<FinishingMaterial> {
     )
       ..price = fields[4] as double
       ..parent = fields[5] as String
+      ..cbmLength = fields[9] as double
+      ..cbmWidth = fields[10] as double
+      ..cbmHeight = fields[11] as double
       ..id = fields[0] as String;
   }
 
   @override
   void write(BinaryWriter writer, FinishingMaterial obj) {
     writer
-      ..writeByte(8)
+      ..writeByte(12)
       ..writeByte(4)
       ..write(obj.price)
       ..writeByte(5)
@@ -48,6 +52,14 @@ class FinishingMaterialAdapter extends TypeAdapter<FinishingMaterial> {
       ..write(obj.image)
       ..writeByte(3)
       ..write(obj.description)
+      ..writeByte(8)
+      ..write(obj.volumetricWeight)
+      ..writeByte(9)
+      ..write(obj.cbmLength)
+      ..writeByte(10)
+      ..write(obj.cbmWidth)
+      ..writeByte(11)
+      ..write(obj.cbmHeight)
       ..writeByte(0)
       ..write(obj.id);
   }
@@ -112,7 +124,11 @@ FinishingMaterialBase _$FinishingMaterialBaseFromJson(
   return FinishingMaterialBase(
     name: json['name'] as String,
     image: json['image'] == null ? null : ImageModel.fromJson(json['image']),
+    cbmHeight: (json['cbmHeight'] as num)?.toDouble(),
+    cbmLength: (json['cbmLength'] as num)?.toDouble(),
+    cbmWidth: (json['cbmWidth'] as num)?.toDouble(),
     description: json['description'] as String,
+    volumetricWeight: (json['volumetricWeight'] as num)?.toDouble(),
   )..id = json['_id'] as String;
 }
 
@@ -121,6 +137,7 @@ FinishingMaterial _$FinishingMaterialFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     image: json['image'] == null ? null : ImageModel.fromJson(json['image']),
     description: json['description'] as String,
+    volumetricWeight: (json['volumetricWeight'] as num)?.toDouble(),
     variants: (json['varient'] as List)
         ?.map((e) => e as Map<String, dynamic>)
         ?.toList(),
@@ -129,12 +146,24 @@ FinishingMaterial _$FinishingMaterialFromJson(Map<String, dynamic> json) {
         ?.toList(),
   )
     ..id = json['_id'] as String
+    ..cbmLength = (json['cbmLength'] as num)?.toDouble()
+    ..cbmWidth = (json['cbmWidth'] as num)?.toDouble()
+    ..cbmHeight = (json['cbmHeight'] as num)?.toDouble()
     ..price = (json['price'] as num)?.toDouble()
     ..parent = json['parent'] as String;
 }
 
 Map<String, dynamic> _$FinishingMaterialToJson(FinishingMaterial instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    '_id': instance.id,
+    'name': instance.name,
+    'image': instance.image,
+    'description': instance.description,
+    'volumetricWeight': instance.volumetricWeight,
+    'cbmLength': instance.cbmLength,
+    'cbmWidth': instance.cbmWidth,
+    'cbmHeight': instance.cbmHeight,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -142,10 +171,6 @@ Map<String, dynamic> _$FinishingMaterialToJson(FinishingMaterial instance) {
     }
   }
 
-  writeNotNull('_id', instance.id);
-  val['name'] = instance.name;
-  val['image'] = instance.image;
-  val['description'] = instance.description;
   writeNotNull('price', instance.price);
   writeNotNull('parent', instance.parent);
   writeNotNull('varient', instance.variants);
@@ -163,7 +188,9 @@ FinishingMaterialOption _$FinishingMaterialOptionFromJson(
 
 Map<String, dynamic> _$FinishingMaterialOptionToJson(
     FinishingMaterialOption instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    '_id': instance.id,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -171,7 +198,6 @@ Map<String, dynamic> _$FinishingMaterialOptionToJson(
     }
   }
 
-  writeNotNull('_id', instance.id);
   writeNotNull('optionName', instance.name);
   writeNotNull('optionValues', instance.values);
   return val;

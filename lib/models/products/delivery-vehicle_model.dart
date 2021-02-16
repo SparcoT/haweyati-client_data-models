@@ -12,18 +12,19 @@ class DeliveryVehicle extends Purchasable {
   @HiveField(2)
   ImageModel image;
   @HiveField(3)
-  double minWeight;
-  @HiveField(4)
-  double maxWeight;
-  @HiveField(5)
-  double minVolume;
-  @HiveField(6)
-  double maxVolume;
+  double volumetricWeight;
   @HiveField(7)
   double deliveryCharges;
+  @HiveField(8)
+  double cbmHeight;
+  @HiveField(9)
+  double cbmLength;
+  @HiveField(10)
+  double cbmWidth;
   DeliveryVehicle({this.name, this.image,
+    this.cbmWidth,this.cbmLength,this.cbmHeight,
     this.deliveryCharges,
-    this.minWeight, this.maxWeight,this.maxVolume,this.minVolume});
+    this.volumetricWeight});
 
   Map<String, dynamic> toJson() => _$DeliveryVehicleToJson(this);
   factory DeliveryVehicle.fromJson(json) => _$DeliveryVehicleFromJson(json);
