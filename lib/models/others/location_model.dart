@@ -1,6 +1,5 @@
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
-
 part 'location_model.g.dart';
 
 @JsonSerializable()

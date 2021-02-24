@@ -13,8 +13,6 @@ import 'package:haweyati_client_data_models/model.dart';
 import 'package:haweyati_client_data_models/models/time-slot_model.dart';
 import 'package:haweyati_client_data_models/models/user/customer_model.dart';
 import 'package:haweyati_client_data_models/models/user/supplier_model.dart';
-import 'package:haweyati_client_data_models/models/others/location_model.dart';
-
 part 'order_model.g.dart';
 
 @HiveType(typeId: 190)
@@ -240,6 +238,15 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
 
   @HiveField(17)
   Supplier supplier;
+
+  @HiveField(18)
+  String tripId;
+
+  @HiveField(19)
+  String shareUrl;
+
+  @HiveField(10)
+  double rating;
 
   // @JsonKey(name: 'total')
   // @HiveField(16)

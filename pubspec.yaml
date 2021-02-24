@@ -14,6 +14,9 @@ dependencies:
   shared_preferences:
   google_maps_flutter:
   firebase_dynamic_links:
+  http:
+  dio:
+  fluttertoast:
 
   flutter:
     sdk: flutter

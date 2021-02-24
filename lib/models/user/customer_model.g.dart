@@ -67,7 +67,9 @@ Customer _$CustomerFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) {
-  final val = <String, dynamic>{};
+  final val = <String, dynamic>{
+    '_id': instance.id,
+  };
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -75,7 +77,6 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) {
     }
   }
 
-  writeNotNull('_id', instance.id);
   writeNotNull('status', instance.status);
   writeNotNull('message', instance.message);
   writeNotNull('profile', instance.profile);

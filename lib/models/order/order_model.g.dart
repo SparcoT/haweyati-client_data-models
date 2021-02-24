@@ -356,7 +356,11 @@ Order<T> _$OrderFromJson<T extends OrderableProduct<Purchasable>>(
         : Driver.fromJson(json['driver'] as Map<String, dynamic>)
     ..supplier =
         json['supplier'] == null ? null : Supplier.fromJson(json['supplier'])
+    ..tripId = json['tripId'] as String
+    ..shareUrl = json['shareUrl'] as String
+    ..rating = (json['rating'] as num)?.toDouble()
     ..total = (json['total'] as num)?.toDouble();
+
 }
 
 Map<String, dynamic> _$OrderToJson<T extends OrderableProduct<Purchasable>>(
@@ -386,6 +390,8 @@ Map<String, dynamic> _$OrderToJson<T extends OrderableProduct<Purchasable>>(
   writeNotNull('updatedAt', instance.updatedAt?.toIso8601String());
   writeNotNull('driver', instance.driver);
   writeNotNull('supplier', instance.supplier);
+  writeNotNull('tripId', instance.tripId);
+  writeNotNull('shareUrl', instance.shareUrl);
   writeNotNull('total', instance.total);
   return val;
 }
