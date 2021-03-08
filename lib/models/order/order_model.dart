@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'products/single-scaffolding_orderable.dart';
 import 'products/delivery-vehicle_orderable.dart';
 import 'package:hive/hive.dart';
@@ -13,51 +14,40 @@ import 'package:haweyati_client_data_models/model.dart';
 import 'package:haweyati_client_data_models/models/time-slot_model.dart';
 import 'package:haweyati_client_data_models/models/user/customer_model.dart';
 import 'package:haweyati_client_data_models/models/user/supplier_model.dart';
+
 part 'order_model.g.dart';
 
 @HiveType(typeId: 190)
 enum OrderType {
-  @HiveField(1)
-  @JsonValue('Construction Dumpster')
-  dumpster,
-  @HiveField(2)
-  @JsonValue('Finishing Material')
-  finishingMaterial,
-  @HiveField(3)
-  @JsonValue('Scaffolding')
-  scaffolding,
-  @HiveField(0)
-  @JsonValue('Building Material')
-  buildingMaterial,
-  @HiveField(4)
-  @JsonValue('Delivery Vehicle')
-  deliveryVehicle,
-}
+@HiveField(1)
+@JsonValue('Construction Dumpster')
+dumpster,@HiveField(2)
+@JsonValue('Finishing Material')
+finishingMaterial,@HiveField(3)
+@JsonValue('Scaffolding')
+scaffolding,@HiveField(0)
+@JsonValue('Building Material')
+buildingMaterial,@HiveField(4)
+@JsonValue('Delivery Vehicle')
+deliveryVehicle,}
 
 @HiveType(typeId: 191)
 enum OrderStatus {
-  @HiveField(0)
-  @JsonValue(0)
-  pending,
-  @HiveField(1)
-  @JsonValue(1)
-  accepted,
-  @HiveField(2)
-  @JsonValue(2)
-  preparing,
-  @HiveField(3)
-  @JsonValue(3)
-  dispatched,
-  @HiveField(4)
-  @JsonValue(4)
-  delivered,
-  @HiveField(5)
-  @JsonValue(5)
-  rejected,
-  @HiveField(7)
-  @JsonValue(7)
-  canceled,
-}
+@HiveField(0)
+@JsonValue(0)
+pending,@HiveField(1)
+@JsonValue(1)
+accepted,@HiveField(2)
+@JsonValue(2)
+preparing,@HiveField(3)
+@JsonValue(3)
+dispatched,@HiveField(4)
+@JsonValue(4)
+delivered,@HiveField(5)
+@JsonValue(5)
+rejected,@HiveField(6)
+@JsonValue(6)
+canceled,}
 
 extension ExOrderStatus on OrderStatus {
   String get value {
@@ -102,7 +92,9 @@ class OrderImage {
   String name;
 
   OrderImage({this.sort, this.name});
+
   Map<String, dynamic> toJson() => _$OrderImageToJson(this);
+
   factory OrderImage.fromJson(json) => _$OrderImageFromJson(json);
 }
 
@@ -121,9 +113,9 @@ class OrderLocation extends Location {
     this.dropOffTime,
     this.dropOffDate,
   }) : super(
-          latitude: 2,
-          longitude: 1,
-        ) {
+    latitude: 2,
+    longitude: 1,
+  ) {
     dropOffDate = DateTime.now();
   }
 
@@ -135,11 +127,13 @@ class OrderLocation extends Location {
   }
 
   factory OrderLocation.fromAppData() {
-    return OrderLocation()..update(AppData().location);
+    return OrderLocation()
+      ..update(AppData().location);
   }
 
   @override
   Map<String, dynamic> toJson() => _$OrderLocationToJson(this);
+
   factory OrderLocation.fromJson(json) => _$OrderLocationFromJson(json);
 }
 
@@ -154,6 +148,7 @@ class OrderPayment {
   OrderPayment({this.type, this.intentId});
 
   Map<String, dynamic> toJson() => _$OrderPaymentToJson(this);
+
   factory OrderPayment.fromJson(json) => _$OrderPaymentFromJson(json);
 }
 
@@ -164,7 +159,8 @@ class OrderProductHolder<T extends OrderableProduct> {
 
   OrderProductHolder({this.item, this.supplier, this.subtotal});
 
-  Map<String, dynamic> toJson() => <String, dynamic>{
+  Map<String, dynamic> toJson() =>
+      <String, dynamic>{
         'item': (item as dynamic).toJson(),
         'subtotal': subtotal,
         'supplier': supplier
@@ -176,10 +172,11 @@ abstract class Purchasable extends BaseModelHive {}
 abstract class OrderableProduct<T extends Purchasable> extends HiveObject {
   @HiveField(0)
   T product;
+
   OrderableProduct(this.product);
 
-  // T get product => _product;
-  // set product(T t) => _product = t;
+// T get product => _product;
+// set product(T t) => _product = t;
 }
 
 // @HiveType(typeId: 179)
@@ -248,6 +245,21 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
   @HiveField(10)
   double rating;
 
+  @HiveField(20)
+  double rewardPointsValue;
+
+  @HiveField(21)
+  double vat;
+
+  @HiveField(22)
+  Map<String, dynamic> supplierCancellationReason;
+
+  @HiveField(23)
+  String coupon;
+
+  @HiveField(24)
+  double couponValue;
+
   // @JsonKey(name: 'total')
   // @HiveField(16)
   // double orderTotal;
@@ -268,8 +280,10 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
   //   }
   // }
 
-  Map<String, dynamic> toJson() => _$OrderToJson(this)
-    ..addAll({'items': products.map((e) => e.toJson()).toList()});
+  Map<String, dynamic> toJson() =>
+      _$OrderToJson(this)
+        ..addAll({'items': products.map((e) => e.toJson()).toList()});
+
   factory Order.fromJson(json) {
     final order = _$OrderFromJson(json);
 
@@ -290,13 +304,18 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
   }
 
   /// Value Added Tax (15%);
-  static const vat = .15;
+  static const vatVal = .15;
 
   double get subtotal => _subtotal;
-  double get total => subtotal + subtotal * vat;
+
+  double get total => max(0, subtotal + (subtotal * vatVal) - (rewardPointsValue ?? 0) -
+          (couponValue ?? 0));
+
   double get totalWithoutVat => _subtotal;
-  // double get total => (_subtotal * vat ) + _subtotal;
-  set total(double val) {_subtotal = val;}
+
+  set total(double val) {
+    _subtotal = val;
+  }
 
 
   void addImage(File file) async {
@@ -315,6 +334,7 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
     ));
 
     _subtotal += price;
+    vat = _subtotal * vatVal;
   }
 
   void clearProducts() {
@@ -323,42 +343,44 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
   }
 }
 
-Iterable<OrderProductHolder> _parseProducts(
-    List<dynamic> products,
-    OrderType type,
-    ) {
-
+Iterable<OrderProductHolder> _parseProducts(List<dynamic> products,
+    OrderType type,) {
   switch (type) {
     case OrderType.buildingMaterial:
-      return products.map((product) => OrderProductHolder(
-          item: BuildingMaterialOrderable.fromJson(product['item']),
-          supplier: product['supplier'],
-          subtotal: product['subtotal']?.toDouble()
-      ));
+      return products.map((product) =>
+          OrderProductHolder(
+              item: BuildingMaterialOrderable.fromJson(product['item']),
+              supplier: product['supplier'],
+              subtotal: product['subtotal']?.toDouble()
+          ));
     case OrderType.dumpster:
-      return products.map((product) => OrderProductHolder(
-          item: DumpsterOrderable.fromJson(product['item']),
-          supplier: product['supplier'],
-          subtotal: product['subtotal']?.toDouble()
-      ));
+      return products.map((product) =>
+          OrderProductHolder(
+              item: DumpsterOrderable.fromJson(product['item']),
+              supplier: product['supplier'],
+              subtotal: product['subtotal']?.toDouble()
+          ));
     case OrderType.finishingMaterial:
-      return products.map((product) => OrderProductHolder(
-          item: FinishingMaterialOrderable.fromJson(product['item']),
-          supplier: product['supplier'],
-          subtotal: product['subtotal']?.toDouble()
-      ));
+      return products.map((product) =>
+          OrderProductHolder(
+              item: FinishingMaterialOrderable.fromJson(product['item']),
+              supplier: product['supplier'],
+              subtotal: product['subtotal']?.toDouble()
+          ));
     case OrderType.scaffolding:
-      return products.map((product) => OrderProductHolder(
-        item: SingleScaffoldingOrderable.fromJson(product['item']),
-        supplier: product['supplier'],
-        subtotal: product['subtotal']?.toDouble()
-      ));
+      return products.map((product) =>
+          OrderProductHolder(
+              item: SingleScaffoldingOrderable.fromJson(product['item']),
+              supplier: product['supplier'],
+              subtotal: product['subtotal']?.toDouble()
+          ));
     case OrderType.deliveryVehicle:
-      return products.map((product) => OrderProductHolder(
-          item: DeliveryVehicleOrderable.fromJson(product['item']),
-          supplier: product['supplier'],
-          subtotal: product['subtotal']?.toDouble()
-      ));
+      return products.map((product) =>
+          OrderProductHolder(
+              item: DeliveryVehicleOrderable.fromJson(product['item']),
+              supplier: product['supplier'],
+              subtotal: product['subtotal']?.toDouble()
+          ));
   }
 
 
@@ -366,16 +388,18 @@ Iterable<OrderProductHolder> _parseProducts(
 }
 
 
-Map<String, dynamic> locationToJson(OrderLocation location) => {
-  'dropoffLocation': {
-    'longitude': location.longitude,
-    'latitude': location.latitude
-  },
-  'dropoffAddress': location.address,
-  'dropoffDate': location.dropOffDate.millisecondsSinceEpoch,
-  'dropoffTime': location.dropOffTime != null ? TimeSlot.toJson(location.dropOffTime) : null,
-  'city': location.city
-};
+Map<String, dynamic> locationToJson(OrderLocation location) =>
+    {
+      'dropoffLocation': {
+        'longitude': location.longitude,
+        'latitude': location.latitude
+      },
+      'dropoffAddress': location.address,
+      'dropoffDate': location.dropOffDate.millisecondsSinceEpoch,
+      'dropoffTime': location.dropOffTime != null ? TimeSlot.toJson(
+          location.dropOffTime) : null,
+      'city': location.city
+    };
 
 OrderLocation locationFromJson(Map<String, dynamic> json) {
   return OrderLocation(
@@ -383,6 +407,7 @@ OrderLocation locationFromJson(Map<String, dynamic> json) {
     latitude: json['dropoffLocation']['latitude'],
     dropOffDate: DateTime.parse(json['dropoffDate']),
     dropOffTime: TimeSlot.fromJson(json['dropoffTime']),
-  )..address = json['dropoffAddress'];
+  )
+    ..address = json['dropoffAddress'];
 }
 

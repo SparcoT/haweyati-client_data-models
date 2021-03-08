@@ -79,7 +79,7 @@ class OrderStatusAdapter extends TypeAdapter<OrderStatus> {
         return OrderStatus.delivered;
       case 5:
         return OrderStatus.rejected;
-      case 7:
+      case 6:
         return OrderStatus.canceled;
       default:
         return null;
@@ -108,7 +108,7 @@ class OrderStatusAdapter extends TypeAdapter<OrderStatus> {
         writer.writeByte(5);
         break;
       case OrderStatus.canceled:
-        writer.writeByte(7);
+        writer.writeByte(6);
         break;
     }
   }
@@ -359,8 +359,13 @@ Order<T> _$OrderFromJson<T extends OrderableProduct<Purchasable>>(
     ..tripId = json['tripId'] as String
     ..shareUrl = json['shareUrl'] as String
     ..rating = (json['rating'] as num)?.toDouble()
+    ..rewardPointsValue = (json['rewardPointsValue'] as num)?.toDouble()
+    ..vat = (json['vat'] as num)?.toDouble()
+    ..supplierCancellationReason =
+        json['supplierCancellationReason'] as Map<String, dynamic>
+    ..coupon = json['coupon'] as String
+    ..couponValue = (json['couponValue'] as num)?.toDouble()
     ..total = (json['total'] as num)?.toDouble();
-
 }
 
 Map<String, dynamic> _$OrderToJson<T extends OrderableProduct<Purchasable>>(
@@ -392,6 +397,13 @@ Map<String, dynamic> _$OrderToJson<T extends OrderableProduct<Purchasable>>(
   writeNotNull('supplier', instance.supplier);
   writeNotNull('tripId', instance.tripId);
   writeNotNull('shareUrl', instance.shareUrl);
+  writeNotNull('rating', instance.rating);
+  writeNotNull('rewardPointsValue', instance.rewardPointsValue);
+  writeNotNull('vat', instance.vat);
+  writeNotNull(
+      'supplierCancellationReason', instance.supplierCancellationReason);
+  writeNotNull('coupon', instance.coupon);
+  writeNotNull('couponValue', instance.couponValue);
   writeNotNull('total', instance.total);
   return val;
 }
@@ -443,5 +455,5 @@ const _$OrderStatusEnumMap = {
   OrderStatus.dispatched: 3,
   OrderStatus.delivered: 4,
   OrderStatus.rejected: 5,
-  OrderStatus.canceled: 7,
+  OrderStatus.canceled: 6,
 };

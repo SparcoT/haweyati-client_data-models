@@ -8,7 +8,7 @@ part 'single-scaffolding_model.g.dart';
 @JsonSerializable(includeIfNull: false)
 class SingleScaffolding extends Purchasable {
   @HiveField(1)
-  String type;
+  String name;
   @HiveField(2)
   String description;
   @HiveField(3)
@@ -21,7 +21,7 @@ class SingleScaffolding extends Purchasable {
   double cbmLength;
   @HiveField(7)
   double cbmWidth;
-  SingleScaffolding({this.cbmHeight,this.cbmLength,this.cbmWidth, this.type,this.description,this.pricing,this.volumetricWeight});
+  SingleScaffolding({this.cbmHeight,this.cbmLength,this.cbmWidth, this.name,this.description,this.pricing,this.volumetricWeight});
 
   int get days => pricing.first.days;
   double get rent => pricing.first.rent;

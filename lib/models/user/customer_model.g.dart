@@ -21,13 +21,15 @@ class CustomerAdapter extends TypeAdapter<Customer> {
       ..message = fields[2] as String
       ..profile = fields[3] as Profile
       ..location = fields[4] as Location
+      ..points = fields[5] as int
+      ..referralCode = fields[6] as String
       ..id = fields[0] as String;
   }
 
   @override
   void write(BinaryWriter writer, Customer obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(7)
       ..writeByte(1)
       ..write(obj.status)
       ..writeByte(2)
@@ -36,6 +38,10 @@ class CustomerAdapter extends TypeAdapter<Customer> {
       ..write(obj.profile)
       ..writeByte(4)
       ..write(obj.location)
+      ..writeByte(5)
+      ..write(obj.points)
+      ..writeByte(6)
+      ..write(obj.referralCode)
       ..writeByte(0)
       ..write(obj.id);
   }
@@ -63,7 +69,9 @@ Customer _$CustomerFromJson(Map<String, dynamic> json) {
     ..profile =
         json['profile'] == null ? null : Profile.fromJson(json['profile'])
     ..location =
-        json['location'] == null ? null : Location.fromJson(json['location']);
+        json['location'] == null ? null : Location.fromJson(json['location'])
+    ..points = json['points'] as int
+    ..referralCode = json['referralCode'] as String;
 }
 
 Map<String, dynamic> _$CustomerToJson(Customer instance) {
@@ -81,5 +89,7 @@ Map<String, dynamic> _$CustomerToJson(Customer instance) {
   writeNotNull('message', instance.message);
   writeNotNull('profile', instance.profile);
   writeNotNull('location', instance.location);
+  writeNotNull('points', instance.points);
+  writeNotNull('referralCode', instance.referralCode);
   return val;
 }

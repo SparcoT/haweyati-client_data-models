@@ -9,13 +9,13 @@ class Trip {
 	Views views;
 	DeviceInfo deviceInfo;
 	Destination destination;
-	List<TripOrder> orders;
+	// List<TripOrder> orders;
 	// Null summary;
 
 	Trip({this.tripId, this.deviceId, this.startedAt, this.completedAt, this.status, this.views,
 		this.deviceInfo,
 		this.destination,
-		this.orders,
+		// this.orders,
 		// this.summary,
 	});
 
@@ -28,9 +28,9 @@ class Trip {
 		views = json['views'] != null ? new Views.fromJson(json['views']) : null;
 		deviceInfo = json['device_info'] != null ? new DeviceInfo.fromJson(json['device_info']) : null;
 		destination = json['destination'] != null ? new Destination.fromJson(json['destination']) : null;
-		orders = (json['orders'] as List)
-				?.map((i) => TripOrder.fromJson(i))
-				?.toList();
+		// orders = (json['orders'] as List)
+		// 		?.map((i) => TripOrder.fromJson(i))
+		// 		?.toList();
 	}
 
 	Map<String, dynamic> toJson() {
@@ -46,9 +46,9 @@ class Trip {
 		if (this.deviceInfo != null) {
       data['device_info'] = this.deviceInfo.toJson();
     }
-		if (this.orders != null) {
-      data['orders'] = this.orders.map((e) => e.toJson()).toList();
-    }
+		// if (this.orders != null) {
+    //   data['orders'] = this.orders.map((e) => e.toJson()).toList();
+    // }
 		// data['summary'] = this.summary;
 		return data;
 	}

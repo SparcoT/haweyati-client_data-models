@@ -10,7 +10,7 @@ part 'dumpster_model.g.dart';
 @JsonSerializable(includeIfNull: false)
 class Dumpster extends Purchasable {
   @HiveField(1)
-  String size;
+  String name;
   @HiveField(2)
   ImageModel image;
   @HiveField(4)
@@ -18,7 +18,7 @@ class Dumpster extends Purchasable {
   @HiveField(3)
   List<ProductRent> pricing;
 
-  Dumpster({this.size, this.image, this.description, this.pricing});
+  Dumpster({this.name, this.image, this.description, this.pricing});
 
   int get days => pricing.first.days;
   double get rent => pricing.first.rent;

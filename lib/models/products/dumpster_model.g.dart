@@ -8,7 +8,7 @@ part of 'dumpster_model.dart';
 
 Dumpster _$DumpsterFromJson(Map<String, dynamic> json) {
   return Dumpster(
-    size: json['size'] as String,
+    name: json['name'] as String,
     image: json['image'] == null ? null : ImageModel.fromJson(json['image']),
     description: json['description'] as String,
     pricing: (json['pricing'] as List)
@@ -28,7 +28,7 @@ Map<String, dynamic> _$DumpsterToJson(Dumpster instance) {
     }
   }
 
-  writeNotNull('size', instance.size);
+  writeNotNull('name', instance.name);
   writeNotNull('image', instance.image);
   writeNotNull('description', instance.description);
   writeNotNull('pricing', instance.pricing);

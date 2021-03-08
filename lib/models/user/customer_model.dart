@@ -2,7 +2,6 @@ import 'package:haweyati_client_data_models/models/others/location_model.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:haweyati_client_data_models/model.dart';
-
 import 'profile_model.dart';
 
 part 'customer_model.g.dart';
@@ -14,6 +13,8 @@ class Customer extends BaseModelHive {
   @HiveField(2) String message;
   @HiveField(3) Profile profile;
   @HiveField(4) Location location;
+  @HiveField(5) int points;
+  @HiveField(6) String referralCode;
 
   String get name => profile.name;
 

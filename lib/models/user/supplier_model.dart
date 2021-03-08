@@ -15,6 +15,7 @@ class Supplier extends BaseModelHive {
   @HiveField(5) String shopParentId;
   @HiveField(6) List<String> services;
   @HiveField(7) String message;
+  @HiveField(8) double rating;
 
   Supplier({
     this.services,
@@ -24,6 +25,7 @@ class Supplier extends BaseModelHive {
     this.shopParentId,
     this.message,
     this.status,
+    this.rating,
   });
 
   Map<String, dynamic> toJson() => _$SupplierToJson(this);
