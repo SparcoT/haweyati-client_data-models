@@ -6,6 +6,7 @@ import 'package:haweyati_client_data_models/models/user/customer_model.dart';
 mixin AuthData {
   static Customer _user;
   static String _accessToken;
+  static LazyBox<Customer> _customerBox;
 
   static Future<void> initiate() async {
     Hive.registerAdapter(ProfileAdapter());
@@ -13,7 +14,7 @@ mixin AuthData {
     // Uncomment to clear customer
     // Hive.openBox('customers').then((value) => value.clear());
     final box = await Hive.openLazyBox<Customer>('customers');
-
+    _customerBox = box;
     if (box.isNotEmpty) {
       _user = await box.getAt(0);
     }
@@ -29,8 +30,8 @@ mixin AuthData {
 
   Customer get user => _user;
   set user(Customer customer) {
+    _customerBox.clear();
     _user = customer;
-
     Hive.lazyBox<Customer>('customers')
         .add(customer)
         .then((value) => customer.save());

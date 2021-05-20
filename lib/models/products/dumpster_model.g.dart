@@ -18,9 +18,7 @@ Dumpster _$DumpsterFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$DumpsterToJson(Dumpster instance) {
-  final val = <String, dynamic>{
-    '_id': instance.id,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -28,6 +26,7 @@ Map<String, dynamic> _$DumpsterToJson(Dumpster instance) {
     }
   }
 
+  writeNotNull('_id', instance.id);
   writeNotNull('name', instance.name);
   writeNotNull('image', instance.image);
   writeNotNull('description', instance.description);

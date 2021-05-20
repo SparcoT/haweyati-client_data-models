@@ -154,16 +154,7 @@ FinishingMaterial _$FinishingMaterialFromJson(Map<String, dynamic> json) {
 }
 
 Map<String, dynamic> _$FinishingMaterialToJson(FinishingMaterial instance) {
-  final val = <String, dynamic>{
-    '_id': instance.id,
-    'name': instance.name,
-    'image': instance.image,
-    'description': instance.description,
-    'volumetricWeight': instance.volumetricWeight,
-    'cbmLength': instance.cbmLength,
-    'cbmWidth': instance.cbmWidth,
-    'cbmHeight': instance.cbmHeight,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -171,6 +162,14 @@ Map<String, dynamic> _$FinishingMaterialToJson(FinishingMaterial instance) {
     }
   }
 
+  writeNotNull('_id', instance.id);
+  val['name'] = instance.name;
+  val['image'] = instance.image;
+  val['description'] = instance.description;
+  val['volumetricWeight'] = instance.volumetricWeight;
+  val['cbmLength'] = instance.cbmLength;
+  val['cbmWidth'] = instance.cbmWidth;
+  val['cbmHeight'] = instance.cbmHeight;
   writeNotNull('price', instance.price);
   writeNotNull('parent', instance.parent);
   writeNotNull('varient', instance.variants);
@@ -188,9 +187,7 @@ FinishingMaterialOption _$FinishingMaterialOptionFromJson(
 
 Map<String, dynamic> _$FinishingMaterialOptionToJson(
     FinishingMaterialOption instance) {
-  final val = <String, dynamic>{
-    '_id': instance.id,
-  };
+  final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {
     if (value != null) {
@@ -198,6 +195,7 @@ Map<String, dynamic> _$FinishingMaterialOptionToJson(
     }
   }
 
+  writeNotNull('_id', instance.id);
   writeNotNull('optionName', instance.name);
   writeNotNull('optionValues', instance.values);
   return val;

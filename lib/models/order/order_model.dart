@@ -260,6 +260,9 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
   @HiveField(24)
   double couponValue;
 
+  double get itemsSubtotal => products.fold(0, (previousValue, element) => previousValue + element.subtotal);
+
+
   // @JsonKey(name: 'total')
   // @HiveField(16)
   // double orderTotal;
@@ -308,8 +311,9 @@ class Order<T extends OrderableProduct> extends BaseModelHive {
 
   double get subtotal => _subtotal;
 
-  double get total => max(0, subtotal + (subtotal * vatVal) - (rewardPointsValue ?? 0) -
-          (couponValue ?? 0));
+  double get total => max(0,  (subtotal - (rewardPointsValue ?? 0) -
+      (couponValue ??  0))  + ((subtotal - (rewardPointsValue ?? 0) -
+      (couponValue ??  0)) * vatVal));
 
   double get totalWithoutVat => _subtotal;
 
